@@ -216,15 +216,42 @@ loader.load('./models/Tree.glb', (gltf) => {
                     return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
                 }
 
+                float warp(vec2 p) {
+                    float n1 = snoise(vec3(p * 0.5, 0.0));
+                    float n2 = snoise(vec3(p * 0.5 + vec2(5.2, 1.3), 0.0));
+                    return n1 * 0.5 + n2 * 0.5;
+                }
+
+                float ridgeNoise(vec3 p) {
+                    return 1.0 - abs(snoise(p));
+                }
+
                 void main() {
                     vUv = uv;
                     vec3 pos = position;
 
-                    float n1 = snoise(vec3(pos.x * 0.3, pos.y * 0.3, 0.0)) * 1.5;
-                    float n2 = snoise(vec3(pos.x * 0.6, pos.y * 0.6, 10.0)) * 0.75;
-                    float n3 = snoise(vec3(pos.x * 1.2, pos.y * 1.2, 20.0)) * 0.375;
+                    vec2 stretched = vec2(pos.x * 0.4, pos.y * 1.5);
 
-                    float elevation = n1 + n2 + n3;
+                    float wx = warp(stretched * 1.0);
+                    float wy = warp(stretched * 1.0 + vec2(5.2, 1.3));
+                    vec2 warped = stretched + vec2(wx, wy) * 0.6;
+
+                    float wx2 = warp(warped * 2.0 + vec2(1.7, 9.2));
+                    float wy2 = warp(warped * 2.0 + vec2(8.3, 2.8));
+                    vec2 warped2 = warped + vec2(wx2, wy2) * 0.3;
+
+                    vec3 warp3d = vec3(warped2, 0.0);
+
+                    float n1 = ridgeNoise(warp3d * 0.3) * 2.5;
+                    float n2 = ridgeNoise(warp3d * 0.6 + 10.0) * 1.25;
+                    float n3 = ridgeNoise(warp3d * 1.2 + 20.0) * 0.625;
+                    float n4 = ridgeNoise(warp3d * 2.4 + 30.0) * 0.3125;
+                    float n5 = ridgeNoise(warp3d * 4.8 + 40.0) * 0.15625;
+                    float n6 = ridgeNoise(warp3d * 9.6 + 50.0) * 0.078125;
+                    float n7 = ridgeNoise(warp3d * 19.2 + 60.0) * 0.0390625;
+                    float n8 = ridgeNoise(warp3d * 38.4 + 70.0) * 0.01953125;
+
+                    float elevation = n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8;
 
                     pos.z += elevation;
                     vElevation = elevation;
