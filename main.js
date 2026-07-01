@@ -316,10 +316,29 @@ loader.load('./models/Tree.glb', (gltf) => {
         }
 
         if (i === 3) {
-            const groupLight = new THREE.AmbientLight(0xffffff, 1);
-            group.add(groupLight);
-
             const paredGeo = new THREE.PlaneGeometry(10, 10, 128, 128);
+
+            const bulbColors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
+            const bulbPositions = [
+                new THREE.Vector3(-4, 8, -4),
+                new THREE.Vector3(4, 8, -4),
+                new THREE.Vector3(-4, 8, 4),
+                new THREE.Vector3(4, 8, 4),
+                new THREE.Vector3(0, 8, -4),
+                new THREE.Vector3(0, 8, 4),
+            ];
+
+            bulbColors.forEach((color, j) => {
+                const bulbGeo = new THREE.SphereGeometry(0.3, 16, 16);
+                const bulbMat = new THREE.MeshBasicMaterial({ color: color });
+                const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+                bulb.position.copy(bulbPositions[j]);
+                group.add(bulb);
+
+                const pointLight = new THREE.PointLight(color, 2, 15);
+                pointLight.position.copy(bulbPositions[j]);
+                group.add(pointLight);
+            });
 
             const pared1 = new THREE.Group();
             pared1.name = 'pared-1';
@@ -350,6 +369,19 @@ loader.load('./models/Tree.glb', (gltf) => {
             pared2Mesh.position.set(5, 5, 0);
             pared2.add(pared2Mesh);
             group.add(pared2);
+        }
+
+        if (i === 4) {
+            group.name = 'techo';
+            const techoGeo = new THREE.PlaneGeometry(10, 10);
+            const techoMat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                map: paredTextures.basecolor,
+                side: THREE.DoubleSide,
+            });
+            const techoMesh = new THREE.Mesh(techoGeo, techoMat);
+            techoMesh.rotation.x = Math.PI / 2;
+            group.add(techoMesh);
         }
 
         scene.add(group);
