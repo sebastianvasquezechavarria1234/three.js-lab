@@ -44,6 +44,7 @@ const textureLoader = new THREE.TextureLoader();
 let model;
 let petalTexture;
 let fogTexture;
+let planeTextures = {};
 let petalGeo;
 const clock = new THREE.Clock();
 
@@ -53,6 +54,16 @@ textureLoader.load('./img/petal.webp', (texture) => {
 
 textureLoader.load('./img/fog-5.webp', (texture) => {
     fogTexture = texture;
+});
+
+const textureNames = ['BaseColor', 'Normal', 'Roughness', 'AmbientOcclusion', 'Height'];
+textureNames.forEach((name) => {
+    textureLoader.load(`./textures/plane/woodplank_39_${name}-2K.jpg`, (texture) => {
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(2, 2);
+        planeTextures[name] = texture;
+    });
 });
 
 loader.load('./models/Tree.glb', (gltf) => {
@@ -69,9 +80,17 @@ loader.load('./models/Tree.glb', (gltf) => {
         group.name = `group-${i + 1}`;
         group.position.copy(g.pos);
 
-        const geo = new THREE.PlaneGeometry(10, 10);
+        const isGroup4 = i === 3;
+        const geo = new THREE.PlaneGeometry(10, 10, 128, 128);
+
+        if (isGroup4) {
+            const uv = geo.attributes.uv;
+            geo.setAttribute('uv2', new THREE.BufferAttribute(uv.array.slice(), 2));
+        }
+
         const mat = new THREE.MeshStandardMaterial({
-            color: g.color,
+            color: isGroup4 ? 0xffffff : g.color,
+            map: isGroup4 ? planeTextures.BaseColor : null,
             side: THREE.DoubleSide,
         });
         const mesh = new THREE.Mesh(geo, mat);
@@ -228,8 +247,15 @@ loader.load('./models/Tree.glb', (gltf) => {
                     float n6 = snoise(vec3(pos.x * 9.6, pos.y * 9.6, 50.0)) * 0.0625;
                     float n7 = snoise(vec3(pos.x * 19.2, pos.y * 19.2, 60.0)) * 0.03125;
                     float n8 = snoise(vec3(pos.x * 38.4, pos.y * 38.4, 70.0)) * 0.015625;
+                    float n9 = snoise(vec3(pos.x * 76.8, pos.y * 76.8, 80.0)) * 0.0078125;
+                    float n10 = snoise(vec3(pos.x * 153.6, pos.y * 153.6, 90.0)) * 0.00390625;
+                    float n11 = snoise(vec3(pos.x * 307.2, pos.y * 307.2, 100.0)) * 0.001953125;
+                    float n12 = snoise(vec3(pos.x * 614.4, pos.y * 614.4, 110.0)) * 0.0009765625;
+                    float n13 = snoise(vec3(pos.x * 1228.8, pos.y * 1228.8, 120.0)) * 0.00048828125;
+                    float n14 = snoise(vec3(pos.x * 2457.6, pos.y * 2457.6, 130.0)) * 0.000244140625;
+                    float n15 = snoise(vec3(pos.x * 4915.2, pos.y * 4915.2, 140.0)) * 0.0001220703125;
 
-                    float elevation = n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8;
+                    float elevation = max(0.0, n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 + n13 + n14 + n15);
 
                     pos.z += elevation;
                     vElevation = elevation;
@@ -271,7 +297,7 @@ loader.load('./models/Tree.glb', (gltf) => {
 
             const montMesh = new THREE.Mesh(montGeo, montMat);
             montMesh.rotation.x = -Math.PI / 2;
-            montMesh.position.y = 1.5;
+            montMesh.position.y = 0.1;
             montGroup.add(montMesh);
 
             group.add(montGroup);
