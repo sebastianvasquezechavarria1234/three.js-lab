@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⭐ Three.js Lab
+# ✨🌳 Three.js Lab
 
 ### A living laboratory for experimenting with 3D graphics in the browser
 
