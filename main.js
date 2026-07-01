@@ -31,6 +31,29 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 plane.rotation.x = -Math.PI / 2;
 scene.add(plane);
 
+const groups = [
+    { color: 0xff3333, pos: new THREE.Vector3(-5, 0.01, -5) },
+    { color: 0x33cc33, pos: new THREE.Vector3(5, 0.01, -5) },
+    { color: 0x3366ff, pos: new THREE.Vector3(-5, 0.01, 5) },
+    { color: 0xffcc00, pos: new THREE.Vector3(5, 0.01, 5) },
+];
+
+groups.forEach((g) => {
+    const group = new THREE.Group();
+    group.position.copy(g.pos);
+
+    const geo = new THREE.PlaneGeometry(5, 5);
+    const mat = new THREE.MeshStandardMaterial({
+        color: g.color,
+        side: THREE.DoubleSide,
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.x = -Math.PI / 2;
+    group.add(mesh);
+
+    scene.add(group);
+});
+
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
