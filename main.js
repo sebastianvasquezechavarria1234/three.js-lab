@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 const canvas = document.getElementById('webgl');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -374,6 +376,26 @@ loader.load('./models/Tree.glb', (gltf) => {
             pared2Mesh.position.set(5, 5, 0);
             pared2.add(pared2Mesh);
             group.add(pared2);
+
+            const fontLoader = new FontLoader();
+            fontLoader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/fonts/helvetiker_bold.typeface.json', (font) => {
+                const textGeo = new TextGeometry('sebastian v.', {
+                    font: font,
+                    size: 0.5,
+                    height: 0.1,
+                    curveSegments: 12,
+                });
+                textGeo.computeBoundingBox();
+                const textMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    emissive: 0xffffff,
+                    emissiveIntensity: 0.5,
+                });
+                const textMesh = new THREE.Mesh(textGeo, textMat);
+                textMesh.rotation.x = -Math.PI / 2;
+                textMesh.position.set(-2.5, 0.05, 0);
+                group.add(textMesh);
+            });
         }
 
         if (i === 4) {
