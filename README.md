@@ -8,7 +8,9 @@
 [![GSAP](https://img.shields.io/badge/Animations-GSAP-88CE02?style=for-the-badge)](https://greensock.com/gsap/)
 [![No Build Tools](https://img.shields.io/badge/No%20Bundlers-Zero%20Dependencies-blue?style=for-the-badge)]()
 
-[View Live Demo](https://sebas-dev.vercel.app/)
+[View Live Demo](https://three-js-lab-nine.vercel.app/)
+
+<img src="img/preview.jpg" alt="Three.js Lab Preview" width="100%">
 
 </div>
 
@@ -324,5 +326,7 @@ None needed. This is a static project with no backend or APIs.
 *This project is that.*
 
 **Sebastián V** ❤️
+
+[Portfolio](https://sebas-dev.vercel.app/)
 
 </div>
