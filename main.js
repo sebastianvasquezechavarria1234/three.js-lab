@@ -322,8 +322,14 @@ loader.load('./models/Tree.glb', (gltf) => {
             const bulbLights = [];
 
             bulbColors.forEach((color, j) => {
-                const bulbGeo = new THREE.SphereGeometry(0.3, 16, 16);
-                const bulbMat = new THREE.MeshBasicMaterial({ color: color });
+                const bulbGeo = new THREE.SphereGeometry(0.15, 16, 16);
+                const bulbMat = new THREE.MeshStandardMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: 2,
+                    roughness: 0.2,
+                    metalness: 0.8,
+                });
                 const bulb = new THREE.Mesh(bulbGeo, bulbMat);
                 bulb.position.set(
                     (Math.random() - 0.5) * 8,
