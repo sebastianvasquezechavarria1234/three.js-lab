@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'LuckiestGuy';
+    src: url('./font/LuckiestGuy-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -9,6 +16,7 @@ html, body {
     height: 100%;
     overflow: hidden;
     background: #000;
+    font-family: 'LuckiestGuy', cursive;
 }
 
 #webgl {
@@ -40,12 +48,12 @@ html, body {
 }
 
 .modal-content {
-    background: #1a1a1a;
     padding: 40px;
     border-radius: 10px;
     text-align: center;
     color: white;
     max-width: 400px;
+    font-family: 'LuckiestGuy', cursive;
 }
 
 .modal-content h2 {

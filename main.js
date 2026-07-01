@@ -438,6 +438,7 @@ let textOriginalColor = 0xffffff;
 
 const modal = document.getElementById('modal');
 const closeBtn = document.querySelector('.close');
+const modalContent = document.querySelector('.modal-content');
 
 closeBtn.addEventListener('click', () => {
     gsap.to(canvas, {
@@ -447,12 +448,22 @@ closeBtn.addEventListener('click', () => {
         ease: 'power2.out',
         clearProps: 'transform'
     });
+    gsap.to(modalContent, {
+        scale: 0,
+        rotation: -10,
+        opacity: 0,
+        duration: 0.4,
+        ease: 'back.in(2)',
+    });
     gsap.to(modal, {
         opacity: 0,
-        duration: 0.3,
+        duration: 0.5,
+        delay: 0.1,
         onComplete: () => {
             modal.classList.add('hidden');
             modal.style.opacity = 1;
+            modalContent.style.transform = '';
+            modalContent.style.opacity = '';
         }
     });
 });
@@ -467,7 +478,7 @@ window.addEventListener('click', (event) => {
         const intersects = raycaster.intersectObject(textMeshRef);
         if (intersects.length > 0) {
             gsap.to(canvas, {
-                scale: 1.6,
+                scale: 2.2,
                 filter: 'blur(20px)',
                 duration: 0.5,
                 ease: 'power2.out',
@@ -476,6 +487,10 @@ window.addEventListener('click', (event) => {
             gsap.fromTo(modal, 
                 { opacity: 0 }, 
                 { opacity: 1, duration: 0.5 }
+            );
+            gsap.fromTo(modalContent,
+                { scale: 0, rotation: 15, opacity: 0 },
+                { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: 'back.out(1.7)', delay: 0.1 }
             );
         }
     }
