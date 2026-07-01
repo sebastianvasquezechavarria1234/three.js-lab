@@ -303,6 +303,39 @@ loader.load('./models/Tree.glb', (gltf) => {
             group.add(montGroup);
         }
 
+        if (i === 3) {
+            const groupLight = new THREE.AmbientLight(0xffffff, 1);
+            group.add(groupLight);
+
+            const paredGeo = new THREE.PlaneGeometry(10, 10, 128, 128);
+
+            const pared1 = new THREE.Group();
+            pared1.name = 'pared-1';
+            const pared1Mat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                map: planeTextures.BaseColor,
+                side: THREE.DoubleSide,
+            });
+            const pared1Mesh = new THREE.Mesh(paredGeo, pared1Mat);
+            pared1Mesh.rotation.y = 0;
+            pared1Mesh.position.set(0, 5, -5);
+            pared1.add(pared1Mesh);
+            group.add(pared1);
+
+            const pared2 = new THREE.Group();
+            pared2.name = 'pared-2';
+            const pared2Mat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                map: planeTextures.BaseColor,
+                side: THREE.DoubleSide,
+            });
+            const pared2Mesh = new THREE.Mesh(paredGeo, pared2Mat);
+            pared2Mesh.rotation.y = -Math.PI / 2;
+            pared2Mesh.position.set(5, 5, 0);
+            pared2.add(pared2Mesh);
+            group.add(pared2);
+        }
+
         scene.add(group);
     });
 });
