@@ -333,7 +333,7 @@ loader.load('./models/Tree.glb', (gltf) => {
                 group.add(bulb);
                 bulbs.push(bulb);
 
-                const pointLight = new THREE.PointLight(color, 65, 25);
+                const pointLight = new THREE.PointLight(color, 150, 25);
                 pointLight.position.copy(bulb.position);
                 group.add(pointLight);
                 bulbLights.push(pointLight);
@@ -420,7 +420,7 @@ function animate() {
             const speed = bulb.userData.speed;
             const offset = bulb.userData.offset;
             bulb.position.x = Math.sin(elapsedTime * speed + offset) * 4;
-            bulb.position.y = 2 + Math.sin(elapsedTime * speed * 0.7 + offset) * 3;
+            bulb.position.y = 5 + Math.sin(elapsedTime * speed * 0.7 + offset) * 3;
             bulb.position.z = Math.cos(elapsedTime * speed * 0.8 + offset) * 4;
             lights[j].position.copy(bulb.position);
         });
