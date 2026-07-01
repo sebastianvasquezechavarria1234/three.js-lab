@@ -44,6 +44,7 @@ const groups = [
 
 const loader = new GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
+const loadingManager = new THREE.LoadingManager();
 let model;
 let petalTexture;
 let fogTexture;
@@ -53,36 +54,56 @@ let petalGeo;
 let textMeshRef = null;
 const clock = new THREE.Clock();
 
-textureLoader.load('./img/petal.webp', (texture) => {
-    petalTexture = texture;
-});
+const promises = [];
 
-textureLoader.load('./img/fog-5.webp', (texture) => {
-    fogTexture = texture;
-});
+promises.push(new Promise((resolve) => {
+    textureLoader.load('./img/petal.webp', (texture) => {
+        petalTexture = texture;
+        resolve();
+    });
+}));
+
+promises.push(new Promise((resolve) => {
+    textureLoader.load('./img/fog-5.webp', (texture) => {
+        fogTexture = texture;
+        resolve();
+    });
+}));
 
 const textureNames = ['BaseColor', 'Normal', 'Roughness', 'AmbientOcclusion', 'Height'];
 textureNames.forEach((name) => {
-    textureLoader.load(`./textures/plane/woodplank_39_${name}-2K.jpg`, (texture) => {
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(2, 2);
-        planeTextures[name] = texture;
-    });
+    promises.push(new Promise((resolve) => {
+        textureLoader.load(`./textures/plane/woodplank_39_${name}-2K.jpg`, (texture) => {
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(2, 2);
+            planeTextures[name] = texture;
+            resolve();
+        });
+    }));
 });
 
 const paredTextureNames = ['basecolor', 'normal', 'roughness', 'height'];
 paredTextureNames.forEach((name) => {
-    textureLoader.load(`./textures/pared/marble_108_${name}-1K.png`, (texture) => {
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(2, 2);
-        paredTextures[name] = texture;
-    });
+    promises.push(new Promise((resolve) => {
+        textureLoader.load(`./textures/pared/marble_108_${name}-1K.png`, (texture) => {
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(2, 2);
+            paredTextures[name] = texture;
+            resolve();
+        });
+    }));
 });
 
-loader.load('./models/Tree.glb', (gltf) => {
-    model = gltf.scene;
+promises.push(new Promise((resolve) => {
+    loader.load('./models/Tree.glb', (gltf) => {
+        model = gltf.scene;
+        resolve();
+    });
+}));
+
+Promise.all(promises).then(() => {
 
     model.traverse((child) => {
         if (child.isMesh) {
