@@ -438,9 +438,23 @@ let textOriginalColor = 0xffffff;
 
 const modal = document.getElementById('modal');
 const closeBtn = document.querySelector('.close');
+const canvas = document.getElementById('webgl');
 
 closeBtn.addEventListener('click', () => {
-    modal.classList.add('hidden');
+    gsap.to(canvas, {
+        scale: 1,
+        filter: 'blur(0px)',
+        duration: 0.5,
+        ease: 'power2.out',
+    });
+    gsap.to(modal, {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+            modal.classList.add('hidden');
+            modal.style.opacity = 1;
+        }
+    });
 });
 
 window.addEventListener('click', (event) => {
@@ -452,7 +466,17 @@ window.addEventListener('click', (event) => {
     if (textMeshRef) {
         const intersects = raycaster.intersectObject(textMeshRef);
         if (intersects.length > 0) {
+            gsap.to(canvas, {
+                scale: 1.4,
+                filter: 'blur(10px)',
+                duration: 0.5,
+                ease: 'power2.out',
+            });
             modal.classList.remove('hidden');
+            gsap.fromTo(modal, 
+                { opacity: 0 }, 
+                { opacity: 1, duration: 0.5 }
+            );
         }
     }
 });
