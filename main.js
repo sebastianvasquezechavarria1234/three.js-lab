@@ -37,6 +37,7 @@ const groups = [
     { color: 0x33cc33, pos: new THREE.Vector3(5, 0.01, -5) },
     { color: 0x3366ff, pos: new THREE.Vector3(-5, 0.01, 5) },
     { color: 0xffcc00, pos: new THREE.Vector3(5, 0.01, 5) },
+    { color: 0x888888, pos: new THREE.Vector3(5, 10, 5) },
 ];
 
 const loader = new GLTFLoader();
@@ -45,6 +46,7 @@ let model;
 let petalTexture;
 let fogTexture;
 let planeTextures = {};
+let paredTextures = {};
 let petalGeo;
 const clock = new THREE.Clock();
 
@@ -63,6 +65,16 @@ textureNames.forEach((name) => {
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(2, 2);
         planeTextures[name] = texture;
+    });
+});
+
+const paredTextureNames = ['basecolor', 'normal', 'roughness', 'height'];
+paredTextureNames.forEach((name) => {
+    textureLoader.load(`./textures/pared/marble_108_${name}-1K.png`, (texture) => {
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(2, 2);
+        paredTextures[name] = texture;
     });
 });
 
@@ -313,7 +325,7 @@ loader.load('./models/Tree.glb', (gltf) => {
             pared1.name = 'pared-1';
             const pared1Mat = new THREE.MeshStandardMaterial({
                 color: 0xffffff,
-                map: planeTextures.BaseColor,
+                map: paredTextures.basecolor,
                 side: THREE.DoubleSide,
             });
             const pared1Mesh = new THREE.Mesh(paredGeo, pared1Mat);
@@ -326,7 +338,11 @@ loader.load('./models/Tree.glb', (gltf) => {
             pared2.name = 'pared-2';
             const pared2Mat = new THREE.MeshStandardMaterial({
                 color: 0xffffff,
-                map: planeTextures.BaseColor,
+                map: paredTextures.basecolor,
+                normalMap: paredTextures.normal,
+                roughnessMap: paredTextures.roughness,
+                displacementMap: paredTextures.height,
+                displacementScale: 0.1,
                 side: THREE.DoubleSide,
             });
             const pared2Mesh = new THREE.Mesh(paredGeo, pared2Mat);
