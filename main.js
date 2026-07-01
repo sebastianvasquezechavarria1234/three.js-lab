@@ -378,24 +378,32 @@ loader.load('./models/Tree.glb', (gltf) => {
             group.add(pared2);
 
             const fontLoader = new FontLoader();
-            fontLoader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/fonts/helvetiker_bold.typeface.json', (font) => {
-                const textGeo = new TextGeometry('sebastian v.', {
-                    font: font,
-                    size: 0.5,
-                    height: 0.1,
-                    curveSegments: 12,
-                });
-                textGeo.computeBoundingBox();
-                const textMat = new THREE.MeshStandardMaterial({
-                    color: 0xffffff,
-                    emissive: 0xffffff,
-                    emissiveIntensity: 0.5,
-                });
-                const textMesh = new THREE.Mesh(textGeo, textMat);
-                textMesh.rotation.x = -Math.PI / 2;
-                textMesh.position.set(-2.5, 0.05, 0);
-                group.add(textMesh);
-            });
+            fontLoader.load(
+                './font/Luckiest Guy_Regular.json',
+                (font) => {
+                    const textGeo = new TextGeometry('sebastian v.', {
+                        font: font,
+                        size: 0.5,
+                        height: 0.1,
+                        curveSegments: 12,
+                    });
+                    textGeo.computeBoundingBox();
+                    textGeo.center();
+                    const textMat = new THREE.MeshStandardMaterial({
+                        color: 0xffffff,
+                        emissive: 0xffffff,
+                        emissiveIntensity: 0.5,
+                    });
+                    const textMesh = new THREE.Mesh(textGeo, textMat);
+                    textMesh.rotation.x = -Math.PI / 2;
+                    textMesh.position.set(0, 0.05, 0);
+                    group.add(textMesh);
+                },
+                undefined,
+                (err) => {
+                    console.error('Error loading font:', err);
+                }
+            );
         }
 
         if (i === 4) {
