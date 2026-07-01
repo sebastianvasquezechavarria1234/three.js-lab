@@ -266,7 +266,7 @@ loader.load('./models/Tree.glb', (gltf) => {
 
             const montMesh = new THREE.Mesh(montGeo, montMat);
             montMesh.rotation.x = -Math.PI / 2;
-            montMesh.position.y = 0.01;
+            montMesh.position.y = 1.5;
             montGroup.add(montMesh);
 
             group.add(montGroup);
