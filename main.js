@@ -25,7 +25,7 @@ controls.dampingFactor = 0.05;
 
 const planeGeometry = new THREE.PlaneGeometry(20, 20);
 const planeMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
+    color: 0x000000,
     side: THREE.DoubleSide,
 });
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -101,8 +101,7 @@ loader.load('./models/Tree.glb', (gltf) => {
         }
 
         const mat = new THREE.MeshStandardMaterial({
-            color: isGroup4 ? 0xffffff : g.color,
-            map: isGroup4 ? planeTextures.BaseColor : null,
+            color: 0x000000,
             side: THREE.DoubleSide,
         });
         const mesh = new THREE.Mesh(geo, mat);
@@ -319,32 +318,37 @@ loader.load('./models/Tree.glb', (gltf) => {
             const paredGeo = new THREE.PlaneGeometry(10, 10, 128, 128);
 
             const bulbColors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
-            const bulbPositions = [
-                new THREE.Vector3(-4, 8, -4),
-                new THREE.Vector3(4, 8, -4),
-                new THREE.Vector3(-4, 8, 4),
-                new THREE.Vector3(4, 8, 4),
-                new THREE.Vector3(0, 8, -4),
-                new THREE.Vector3(0, 8, 4),
-            ];
+            const bulbs = [];
+            const bulbLights = [];
 
             bulbColors.forEach((color, j) => {
                 const bulbGeo = new THREE.SphereGeometry(0.3, 16, 16);
                 const bulbMat = new THREE.MeshBasicMaterial({ color: color });
                 const bulb = new THREE.Mesh(bulbGeo, bulbMat);
-                bulb.position.copy(bulbPositions[j]);
+                bulb.position.set(
+                    (Math.random() - 0.5) * 8,
+                    2 + Math.random() * 6,
+                    (Math.random() - 0.5) * 8
+                );
                 group.add(bulb);
+                bulbs.push(bulb);
 
-                const pointLight = new THREE.PointLight(color, 2, 15);
-                pointLight.position.copy(bulbPositions[j]);
+                const pointLight = new THREE.PointLight(color, 65, 25);
+                pointLight.position.copy(bulb.position);
                 group.add(pointLight);
+                bulbLights.push(pointLight);
+
+                bulb.userData.speed = 0.5 + Math.random() * 1.5;
+                bulb.userData.offset = Math.random() * Math.PI * 2;
             });
+
+            group.userData.bulbs = bulbs;
+            group.userData.bulbLights = bulbLights;
 
             const pared1 = new THREE.Group();
             pared1.name = 'pared-1';
             const pared1Mat = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                map: paredTextures.basecolor,
+                color: 0x000000,
                 side: THREE.DoubleSide,
             });
             const pared1Mesh = new THREE.Mesh(paredGeo, pared1Mat);
@@ -356,12 +360,7 @@ loader.load('./models/Tree.glb', (gltf) => {
             const pared2 = new THREE.Group();
             pared2.name = 'pared-2';
             const pared2Mat = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                map: paredTextures.basecolor,
-                normalMap: paredTextures.normal,
-                roughnessMap: paredTextures.roughness,
-                displacementMap: paredTextures.height,
-                displacementScale: 0.1,
+                color: 0x000000,
                 side: THREE.DoubleSide,
             });
             const pared2Mesh = new THREE.Mesh(paredGeo, pared2Mat);
@@ -375,8 +374,7 @@ loader.load('./models/Tree.glb', (gltf) => {
             group.name = 'techo';
             const techoGeo = new THREE.PlaneGeometry(10, 10);
             const techoMat = new THREE.MeshStandardMaterial({
-                color: 0xffffff,
-                map: paredTextures.basecolor,
+                color: 0x000000,
                 side: THREE.DoubleSide,
             });
             const techoMesh = new THREE.Mesh(techoGeo, techoMat);
@@ -412,6 +410,20 @@ function animate() {
             }
             petalGeo.attributes.position.needsUpdate = true;
         }
+    }
+
+    const group4 = scene.getObjectByName('group-4');
+    if (group4 && group4.userData.bulbs) {
+        const bulbs = group4.userData.bulbs;
+        const lights = group4.userData.bulbLights;
+        bulbs.forEach((bulb, j) => {
+            const speed = bulb.userData.speed;
+            const offset = bulb.userData.offset;
+            bulb.position.x = Math.sin(elapsedTime * speed + offset) * 4;
+            bulb.position.y = 2 + Math.sin(elapsedTime * speed * 0.7 + offset) * 3;
+            bulb.position.z = Math.cos(elapsedTime * speed * 0.8 + offset) * 4;
+            lights[j].position.copy(bulb.position);
+        });
     }
 
     controls.update();
