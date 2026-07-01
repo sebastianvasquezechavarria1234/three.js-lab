@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const canvas = document.getElementById('webgl');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -38,20 +39,60 @@ const groups = [
     { color: 0xffcc00, pos: new THREE.Vector3(5, 0.01, 5) },
 ];
 
-groups.forEach((g) => {
-    const group = new THREE.Group();
-    group.position.copy(g.pos);
+const loader = new GLTFLoader();
+let model;
 
-    const geo = new THREE.PlaneGeometry(5, 5);
-    const mat = new THREE.MeshStandardMaterial({
-        color: g.color,
-        side: THREE.DoubleSide,
+loader.load('./models/Tree.glb', (gltf) => {
+    model = gltf.scene;
+
+    groups.forEach((g, i) => {
+        const group = new THREE.Group();
+        group.name = `group-${i + 1}`;
+        group.position.copy(g.pos);
+
+        const geo = new THREE.PlaneGeometry(10, 10);
+        const mat = new THREE.MeshStandardMaterial({
+            color: g.color,
+            side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.rotation.x = -Math.PI / 2;
+        group.add(mesh);
+
+        if (i === 0) {
+            const childColors = [0xff6600, 0x9933ff, 0x00cccc, 0xff66cc];
+            const childPositions = [
+                new THREE.Vector3(-2.5, 0.01, -2.5),
+                new THREE.Vector3(2.5, 0.01, -2.5),
+                new THREE.Vector3(-2.5, 0.01, 2.5),
+                new THREE.Vector3(2.5, 0.01, 2.5),
+            ];
+
+            childPositions.forEach((pos, j) => {
+                const childGroup = new THREE.Group();
+                childGroup.name = `group-1-hijo-${j + 1}`;
+                childGroup.position.copy(pos);
+
+                const childGeo = new THREE.PlaneGeometry(5, 5);
+                const childMat = new THREE.MeshStandardMaterial({
+                    color: childColors[j],
+                    side: THREE.DoubleSide,
+                });
+                const childMesh = new THREE.Mesh(childGeo, childMat);
+                childMesh.rotation.x = -Math.PI / 2;
+                childGroup.add(childMesh);
+
+                const modelClone = model.clone();
+                modelClone.scale.set(0.5, 0.5, 0.5);
+                modelClone.position.y = 0;
+                childGroup.add(modelClone);
+
+                group.add(childGroup);
+            });
+        }
+
+        scene.add(group);
     });
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.rotation.x = -Math.PI / 2;
-    group.add(mesh);
-
-    scene.add(group);
 });
 
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
