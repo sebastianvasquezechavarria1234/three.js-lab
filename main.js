@@ -50,6 +50,7 @@ let fogTexture;
 let planeTextures = {};
 let paredTextures = {};
 let petalGeo;
+let textMeshRef = null;
 const clock = new THREE.Clock();
 
 textureLoader.load('./img/petal.webp', (texture) => {
@@ -398,6 +399,7 @@ loader.load('./models/Tree.glb', (gltf) => {
                     textMesh.rotation.x = -Math.PI / 2;
                     textMesh.position.set(0, 0.05, 0);
                     group.add(textMesh);
+                    textMeshRef = textMesh;
                 },
                 undefined,
                 (err) => {
@@ -428,6 +430,52 @@ scene.add(ambientLight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(5, 10, 7);
 scene.add(directionalLight);
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let textMesh = null;
+let textOriginalColor = 0xffffff;
+
+const modal = document.getElementById('modal');
+const closeBtn = document.querySelector('.close');
+
+closeBtn.addEventListener('click', () => {
+    modal.classList.add('hidden');
+});
+
+window.addEventListener('click', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    if (textMeshRef) {
+        const intersects = raycaster.intersectObject(textMeshRef);
+        if (intersects.length > 0) {
+            modal.classList.remove('hidden');
+        }
+    }
+});
+
+window.addEventListener('mousemove', (event) => {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    if (textMeshRef) {
+        const intersects = raycaster.intersectObject(textMeshRef);
+        if (intersects.length > 0) {
+            textMeshRef.material.color.setHex(0xff6600);
+            textMeshRef.material.emissive.setHex(0xff6600);
+            document.body.style.cursor = 'pointer';
+        } else {
+            textMeshRef.material.color.setHex(textOriginalColor);
+            textMeshRef.material.emissive.setHex(textOriginalColor);
+            document.body.style.cursor = 'default';
+        }
+    }
+});
 
 function animate() {
     const elapsedTime = clock.getElapsedTime();

@@ -15,4 +15,54 @@ html, body {
     display: block;
     width: 100%;
     height: 100%;
+    transition: filter 0.3s;
+}
+
+#webgl.blur {
+    filter: blur(10px);
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: #1a1a1a;
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+    max-width: 400px;
+}
+
+.modal-content h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.modal-content p {
+    font-size: 1rem;
+    color: #aaa;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
 }
