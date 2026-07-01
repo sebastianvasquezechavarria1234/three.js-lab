@@ -43,11 +43,16 @@ const loader = new GLTFLoader();
 const textureLoader = new THREE.TextureLoader();
 let model;
 let petalTexture;
+let fogTexture;
 let petalGeo;
 const clock = new THREE.Clock();
 
 textureLoader.load('./img/petal.webp', (texture) => {
     petalTexture = texture;
+});
+
+textureLoader.load('./img/fog-5.webp', (texture) => {
+    fogTexture = texture;
 });
 
 loader.load('./models/Tree.glb', (gltf) => {
@@ -160,7 +165,6 @@ function animate() {
                 const angle = baseAngle + elapsedTime * 0.5;
                 positions[p * 3] = Math.cos(angle) * radius;
                 positions[p * 3 + 2] = Math.sin(angle) * radius;
-                positions[p * 3 + 1] = 0.5 + Math.sin(elapsedTime * 2.0 + baseAngle * 3.0) * 0.05;
             }
             petalGeo.attributes.position.needsUpdate = true;
         }
