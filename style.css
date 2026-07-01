@@ -15,11 +15,9 @@ html, body {
     display: block;
     width: 100%;
     height: 100%;
-    transition: filter 0.3s;
-}
-
-#webgl.blur {
-    filter: blur(10px);
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
 .modal {
@@ -33,10 +31,12 @@ html, body {
     justify-content: center;
     align-items: center;
     z-index: 100;
+    opacity: 1;
 }
 
 .modal.hidden {
     display: none;
+    opacity: 0;
 }
 
 .modal-content {

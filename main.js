@@ -438,7 +438,6 @@ let textOriginalColor = 0xffffff;
 
 const modal = document.getElementById('modal');
 const closeBtn = document.querySelector('.close');
-const canvas = document.getElementById('webgl');
 
 closeBtn.addEventListener('click', () => {
     gsap.to(canvas, {
@@ -446,6 +445,7 @@ closeBtn.addEventListener('click', () => {
         filter: 'blur(0px)',
         duration: 0.5,
         ease: 'power2.out',
+        clearProps: 'transform'
     });
     gsap.to(modal, {
         opacity: 0,
@@ -467,8 +467,8 @@ window.addEventListener('click', (event) => {
         const intersects = raycaster.intersectObject(textMeshRef);
         if (intersects.length > 0) {
             gsap.to(canvas, {
-                scale: 1.4,
-                filter: 'blur(10px)',
+                scale: 1.6,
+                filter: 'blur(20px)',
                 duration: 0.5,
                 ease: 'power2.out',
             });
